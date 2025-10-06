@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,19 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string().email("Invalid email address").max(255, "Email too long"),
+  password: z.string()
+    .min(12, "Password must be at least 12 characters")
+    .max(128, "Password too long")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+  fullName: z.string().trim().min(2, "Name too short").max(100, "Name too long").optional(),
+});
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -16,15 +29,39 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Redirect to dashboard if already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/dashboard");
+      }
+    });
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Validate input
+      const validationData = {
+        email: email.trim(),
+        password,
+        ...((!isLogin && { fullName: fullName.trim() })),
+      };
+
+      const result = authSchema.safeParse(validationData);
+      if (!result.success) {
+        const firstError = result.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: result.data.email,
+          password: result.data.password,
         });
 
         if (error) throw error;
@@ -32,11 +69,11 @@ export default function Auth() {
         navigate("/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: result.data.email,
+          password: result.data.password,
           options: {
             data: {
-              full_name: fullName,
+              full_name: result.data.fullName || "",
             },
             emailRedirectTo: `${window.location.origin}/dashboard`,
           },
@@ -47,7 +84,13 @@ export default function Auth() {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      if (error.message?.includes("already registered")) {
+        toast.error("This email is already registered. Please log in instead.");
+      } else if (error.message?.includes("Invalid login")) {
+        toast.error("Invalid email or password. Please try again.");
+      } else {
+        toast.error(error.message || "An error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -103,6 +146,11 @@ export default function Auth() {
                 required
                 className="bg-input border-border focus:border-primary"
               />
+              {!isLogin && (
+                <p className="text-xs text-muted-foreground">
+                  Min 12 characters, including uppercase, lowercase, number, and special character
+                </p>
+              )}
             </div>
 
             <Button

@@ -143,18 +143,21 @@ export type Database = {
           full_name: string | null
           id: string
           updated_at: string | null
+          vault_salt: string | null
         }
         Insert: {
           created_at?: string | null
           full_name?: string | null
           id: string
           updated_at?: string | null
+          vault_salt?: string | null
         }
         Update: {
           created_at?: string | null
           full_name?: string | null
           id?: string
           updated_at?: string | null
+          vault_salt?: string | null
         }
         Relationships: []
       }

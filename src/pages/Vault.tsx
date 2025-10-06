@@ -11,6 +11,7 @@ import { Key, Plus, Trash2, Eye, EyeOff, Copy, RefreshCw, Wand2 } from "lucide-r
 import CryptoJS from "crypto-js";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+import { z } from "zod";
 
 interface Password {
   id: string;
@@ -22,12 +23,18 @@ interface Password {
   created_at: string;
 }
 
-const ENCRYPTION_KEY = "cybershield-secret-key-2024";
+const passwordSchema = z.object({
+  site_name: z.string().trim().min(1, "Site name is required").max(100, "Site name too long"),
+  username: z.string().trim().max(255, "Username too long").optional(),
+  password: z.string().min(1, "Password is required").max(1000, "Password too long"),
+  url: z.string().trim().url("Invalid URL").max(2048, "URL too long").optional().or(z.literal("")),
+});
 
 export default function Vault() {
   const [passwords, setPasswords] = useState<Password[]>([]);
   const [showPassword, setShowPassword] = useState<Record<string, boolean>>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [encryptionKey, setEncryptionKey] = useState<string>("");
   const [formData, setFormData] = useState({
     site_name: "",
     username: "",
@@ -46,8 +53,30 @@ export default function Vault() {
   const [showGeneratedPassword, setShowGeneratedPassword] = useState(false);
 
   useEffect(() => {
+    initializeEncryption();
     fetchPasswords();
   }, []);
+
+  const initializeEncryption = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Fetch user's vault salt
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("vault_salt")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.vault_salt) {
+      // Derive encryption key from user ID + vault salt
+      const key = CryptoJS.PBKDF2(user.id + profile.vault_salt, "cybershield-v1", {
+        keySize: 256 / 32,
+        iterations: 10000,
+      }).toString();
+      setEncryptionKey(key);
+    }
+  };
 
   const fetchPasswords = async () => {
     const { data, error } = await supabase
@@ -64,20 +93,37 @@ export default function Vault() {
   };
 
   const encryptPassword = (password: string) => {
-    return CryptoJS.AES.encrypt(password, ENCRYPTION_KEY).toString();
+    if (!encryptionKey) {
+      throw new Error("Encryption not initialized");
+    }
+    return CryptoJS.AES.encrypt(password, encryptionKey).toString();
   };
 
   const decryptPassword = (encryptedPassword: string) => {
-    const bytes = CryptoJS.AES.decrypt(encryptedPassword, ENCRYPTION_KEY);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    if (!encryptionKey) {
+      return "••••••••";
+    }
+    try {
+      const bytes = CryptoJS.AES.decrypt(encryptedPassword, encryptionKey);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch (error) {
+      return "Error decrypting";
+    }
+  };
+
+  const generateSecurePassword = (length: number, charsets: string) => {
+    const array = new Uint8Array(length);
+    crypto.getRandomValues(array);
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      password += charsets.charAt(array[i] % charsets.length);
+    }
+    return password;
   };
 
   const generatePassword = () => {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let password = "";
-    for (let i = 0; i < 16; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
+    const password = generateSecurePassword(16, charset);
     setFormData({ ...formData, password });
     toast.success("Strong password generated!");
   };
@@ -94,10 +140,7 @@ export default function Vault() {
       return;
     }
 
-    let password = "";
-    for (let i = 0; i < passwordLength[0]; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
+    const password = generateSecurePassword(passwordLength[0], charset);
     setGeneratedPassword(password);
     setShowGeneratedPassword(true);
     toast.success("Password generated!");
@@ -112,26 +155,47 @@ export default function Vault() {
       return;
     }
 
-    const encrypted = encryptPassword(formData.password);
-
-    const { error } = await supabase.from("passwords").insert({
-      user_id: user.id,
+    // Validate input
+    const validationData = {
       site_name: formData.site_name,
-      username: formData.username || null,
-      encrypted_password: encrypted,
-      url: formData.url || null,
-      category: formData.category,
-    });
+      username: formData.username || undefined,
+      password: formData.password,
+      url: formData.url || undefined,
+    };
 
-    if (error) {
-      toast.error("Error saving password");
+    const result = passwordSchema.safeParse(validationData);
+    if (!result.success) {
+      const firstError = result.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
 
-    toast.success("Password saved securely!");
-    setIsDialogOpen(false);
-    setFormData({ site_name: "", username: "", password: "", url: "", category: "general" });
-    fetchPasswords();
+    if (!encryptionKey) {
+      toast.error("Encryption not ready. Please wait.");
+      return;
+    }
+
+    try {
+      const encrypted = encryptPassword(result.data.password);
+
+      const { error } = await supabase.from("passwords").insert({
+        user_id: user.id,
+        site_name: result.data.site_name,
+        username: result.data.username || null,
+        encrypted_password: encrypted,
+        url: result.data.url || null,
+        category: formData.category,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password saved securely!");
+      setIsDialogOpen(false);
+      setFormData({ site_name: "", username: "", password: "", url: "", category: "general" });
+      fetchPasswords();
+    } catch (error: any) {
+      toast.error(error.message || "Error saving password");
+    }
   };
 
   const handleDelete = async (id: string) => {

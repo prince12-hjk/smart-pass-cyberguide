@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Coins, Search, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const ethereumAddressSchema = z.string()
+  .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address format")
+  .length(42, "Ethereum address must be 42 characters");
 
 export default function Crypto() {
   const [address, setAddress] = useState("");
@@ -13,8 +18,17 @@ export default function Crypto() {
   const [result, setResult] = useState<any>(null);
 
   const handleLookup = async () => {
-    if (!address.trim()) {
+    const trimmedAddress = address.trim();
+    
+    if (!trimmedAddress) {
       toast.error("Please enter a wallet address");
+      return;
+    }
+
+    // Validate Ethereum address format
+    const validation = ethereumAddressSchema.safeParse(trimmedAddress);
+    if (!validation.success) {
+      toast.error("Invalid Ethereum address format. Must start with 0x followed by 40 hex characters.");
       return;
     }
 
@@ -23,7 +37,7 @@ export default function Crypto() {
     // Simulated lookup (In production, you'd call blockchain API)
     setTimeout(() => {
       setResult({
-        address: address,
+        address: trimmedAddress,
         balance: "1.234 ETH",
         transactions: 42,
         firstSeen: "2023-01-15",
