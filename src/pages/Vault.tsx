@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Key, Plus, Trash2, Eye, EyeOff, Copy, RefreshCw } from "lucide-react";
+import { Key, Plus, Trash2, Eye, EyeOff, Copy, RefreshCw, Wand2 } from "lucide-react";
 import CryptoJS from "crypto-js";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
 
 interface Password {
   id: string;
@@ -33,6 +35,15 @@ export default function Vault() {
     url: "",
     category: "general",
   });
+  
+  // Password generator state
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const [passwordLength, setPasswordLength] = useState([16]);
+  const [includeUppercase, setIncludeUppercase] = useState(true);
+  const [includeLowercase, setIncludeLowercase] = useState(true);
+  const [includeNumbers, setIncludeNumbers] = useState(true);
+  const [includeSymbols, setIncludeSymbols] = useState(true);
+  const [showGeneratedPassword, setShowGeneratedPassword] = useState(false);
 
   useEffect(() => {
     fetchPasswords();
@@ -69,6 +80,27 @@ export default function Vault() {
     }
     setFormData({ ...formData, password });
     toast.success("Strong password generated!");
+  };
+
+  const generateCustomPassword = () => {
+    let charset = "";
+    if (includeLowercase) charset += "abcdefghijklmnopqrstuvwxyz";
+    if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if (includeNumbers) charset += "0123456789";
+    if (includeSymbols) charset += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+    if (charset === "") {
+      toast.error("Please select at least one character type");
+      return;
+    }
+
+    let password = "";
+    for (let i = 0; i < passwordLength[0]; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    setGeneratedPassword(password);
+    setShowGeneratedPassword(true);
+    toast.success("Password generated!");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,10 +156,122 @@ export default function Vault() {
       <Navbar isAuthenticated={true} />
       
       <main className="container mx-auto px-4 pt-24 pb-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-glow mb-2">Password Vault</h1>
+          <p className="text-muted-foreground">Encrypted password storage with AES-256</p>
+        </div>
+
+        {/* Password Generator Section */}
+        <Card className="border-glow mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Wand2 className="h-5 w-5 text-accent" />
+              Password Generator
+            </CardTitle>
+            <CardDescription>
+              Create strong, secure passwords for any website
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label>Password Length: {passwordLength[0]}</Label>
+                </div>
+                <Slider
+                  value={passwordLength}
+                  onValueChange={setPasswordLength}
+                  min={8}
+                  max={32}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="uppercase"
+                    checked={includeUppercase}
+                    onCheckedChange={(checked) => setIncludeUppercase(checked as boolean)}
+                  />
+                  <Label htmlFor="uppercase" className="cursor-pointer">
+                    Uppercase (A-Z)
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="lowercase"
+                    checked={includeLowercase}
+                    onCheckedChange={(checked) => setIncludeLowercase(checked as boolean)}
+                  />
+                  <Label htmlFor="lowercase" className="cursor-pointer">
+                    Lowercase (a-z)
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="numbers"
+                    checked={includeNumbers}
+                    onCheckedChange={(checked) => setIncludeNumbers(checked as boolean)}
+                  />
+                  <Label htmlFor="numbers" className="cursor-pointer">
+                    Numbers (0-9)
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="symbols"
+                    checked={includeSymbols}
+                    onCheckedChange={(checked) => setIncludeSymbols(checked as boolean)}
+                  />
+                  <Label htmlFor="symbols" className="cursor-pointer">
+                    Symbols (!@#$%)
+                  </Label>
+                </div>
+              </div>
+            </div>
+
+            <Button onClick={generateCustomPassword} className="w-full cyber-glow">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Generate Password
+            </Button>
+
+            {generatedPassword && (
+              <div className="space-y-2 animate-fade-in">
+                <Label>Generated Password</Label>
+                <div className="flex items-center gap-2 bg-muted p-3 rounded border-glow">
+                  <span className="font-mono text-sm flex-1 break-all">
+                    {showGeneratedPassword ? generatedPassword : "••••••••••••••••"}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowGeneratedPassword(!showGeneratedPassword)}
+                  >
+                    {showGeneratedPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(generatedPassword)}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Add Password Button */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-glow mb-2">Password Vault</h1>
-            <p className="text-muted-foreground">Encrypted password storage with AES-256</p>
+            <h2 className="text-2xl font-bold text-glow">Saved Passwords</h2>
+            <p className="text-sm text-muted-foreground">Manage your stored passwords</p>
           </div>
 
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
