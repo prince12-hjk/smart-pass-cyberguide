@@ -1,34 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Key, BookOpen, AlertTriangle, Coins, Lock, Eye, Zap } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { supabase } from "@/integrations/supabase/client";
-import { Session } from "@supabase/supabase-js";
 import heroImage from "@/assets/cyber-hero.jpg";
 
 export default function Index() {
-  const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
 
   const features = [
     {
@@ -65,7 +42,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen">
-      <Navbar isAuthenticated={false} />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 overflow-hidden">
@@ -100,13 +77,13 @@ export default function Index() {
             </p>
             
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link to="/auth">
+              <Link to="/dashboard">
                 <Button size="lg" className="cyber-glow text-lg px-8">
                   <Zap className="mr-2 h-5 w-5" />
-                  Get Started Free
+                  Explore Dashboard
                 </Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/knowledge">
                 <Button size="lg" variant="outline" className="border-primary text-lg px-8">
                   Learn More
                 </Button>
@@ -184,9 +161,9 @@ export default function Index() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join CyberShield and take control of your online security with encrypted password storage and comprehensive cyber education
           </p>
-          <Link to="/auth">
+          <Link to="/dashboard">
             <Button size="lg" className="cyber-glow text-lg px-12">
-              Create Free Account
+              Get Started
             </Button>
           </Link>
         </div>
