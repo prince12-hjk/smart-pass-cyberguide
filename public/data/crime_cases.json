@@ -1,0 +1,131 @@
+[
+  {
+    "id": "case1",
+    "title": "SIM Swap Banking Fraud - Mumbai 2023",
+    "summary": "Attackers obtained duplicate SIM cards to intercept OTPs and drain bank accounts, affecting over 50 victims.",
+    "details": "In January 2023, a sophisticated fraud ring in Mumbai executed SIM swap attacks targeting high-net-worth individuals. The attackers used social engineering to obtain personal information from social media profiles, then convinced telecom employees to issue duplicate SIM cards by presenting fake identity documents.\n\nOnce they controlled victims' phone numbers, they intercepted one-time passwords (OTPs) used for two-factor authentication. This allowed them to access bank accounts, transfer funds, and make unauthorized purchases. The fraud went undetected for weeks as victims didn't immediately notice their SIM cards had been deactivated.\n\nThe case broke when multiple victims reported simultaneous account drains. Investigation revealed the attackers had insider help at telecom providers and used money mules to withdraw cash quickly. Total losses exceeded ₹2.5 crore before the ring was busted.",
+    "impact": "₹2.5 crore stolen from 50+ victims. Several victims lost their life savings. The case highlighted vulnerabilities in telecom provider security procedures and the risks of SMS-based two-factor authentication.",
+    "laws": "Indian Penal Code Section 420 (cheating), Section 468 (forgery), Section 120B (criminal conspiracy). Information Technology Act Section 66C (identity theft), Section 66D (cheating by personation using computer resources). Indian Telegraph Act violations. Maximum penalty: 7 years imprisonment plus fines.",
+    "reporting_links": ["https://cybercrime.gov.in", "https://www.police.gov.in"],
+    "prevention": [
+      "Never share OTPs with anyone - legitimate organizations never ask for them",
+      "Enable additional security features beyond SMS 2FA (biometrics, app-based authentication)",
+      "Set up transaction alerts for all banking activities",
+      "Use authenticator apps instead of SMS when possible",
+      "Register for Do Not Disturb (DND) to reduce phishing calls",
+      "Regularly monitor bank statements and credit reports",
+      "Limit personal information shared on social media",
+      "Set up SIM card PIN lock (most people don't know this exists)"
+    ],
+    "immediate_actions": [
+      "Immediately contact your mobile carrier if your SIM suddenly stops working",
+      "Block your bank accounts and credit cards instantly",
+      "File complaint at cybercrime.gov.in and local police station",
+      "Change all banking passwords using a different device",
+      "Request transaction history from bank to identify fraudulent transfers",
+      "Contact your bank's fraud department for possible reversal",
+      "Notify all contacts that your number may be compromised",
+      "Check credit score for unauthorized accounts or loans"
+    ]
+  },
+  {
+    "id": "case2",
+    "title": "Fake KYC Update Phishing - Delhi 2024",
+    "summary": "Mass phishing campaign tricked bank customers into providing credentials on fake KYC update websites, compromising thousands of accounts.",
+    "details": "In March 2024, a large-scale phishing operation targeted customers of major Indian banks. Victims received professional-looking SMS messages claiming their KYC (Know Your Customer) information would expire within 24 hours, requiring immediate updating to avoid account suspension.\n\nThe messages contained links to convincing replica websites of major banks (SBI, HDFC, ICICI). These fake sites were hosted on domains similar to legitimate ones (e.g., sbi-kyc-update.com instead of onlinesbi.com). The sites collected:\n- Full name and address\n- PAN card and Aadhaar numbers\n- Bank account numbers\n- Credit/debit card details including CVV\n- Internet banking username and password\n- OTPs entered in real-time\n\nAttackers used collected information immediately to transfer funds, make purchases, and create new payment accounts. The sophisticated operation included a fake customer service number that reassured suspicious victims.\n\nThe scam was discovered when banks noticed unusual patterns of account access from foreign IP addresses. By then, over 3,000 accounts had been compromised with total losses exceeding ₹15 crore.",
+    "impact": "Over ₹15 crore stolen from 3,000+ victims across India. Many victims were elderly customers unfamiliar with digital banking security. Banks faced reputation damage and increased fraud prevention costs. Several victims faced financial hardship from drained savings accounts.",
+    "laws": "Information Technology Act Section 66C (identity theft), Section 66D (cheating by personation), Section 43 (unauthorized access). Indian Penal Code Section 420 (cheating), Section 415 (fraud). Banking Regulation Act violations. Imprisonment up to 3-7 years plus substantial fines.",
+    "reporting_links": ["https://cybercrime.gov.in", "https://www.rbi.org.in/Scripts/Complaints.aspx"],
+    "prevention": [
+      "Banks NEVER ask customers to update KYC through SMS links",
+      "Always visit official bank websites by typing URL directly, never through links",
+      "Verify sender phone numbers against official bank contact information",
+      "Look for HTTPS and proper SSL certificates on banking websites",
+      "Never provide CVV or OTP to anyone - banks don't ask for these",
+      "Be suspicious of urgent messages creating artificial time pressure",
+      "Enable transaction notifications on mobile apps",
+      "Register phone number with bank for official communications only"
+    ],
+    "immediate_actions": [
+      "If you entered details, contact your bank immediately to freeze accounts",
+      "Block all debit/credit cards associated with the account",
+      "Change internet banking passwords immediately using official channels",
+      "Report the phishing website to cybercrime.gov.in with screenshots",
+      "File FIR at local cyber crime police station",
+      "Monitor accounts closely for 90 days for suspicious activity",
+      "Request new debit/credit cards with different numbers",
+      "Place fraud alert on credit reports",
+      "Save all evidence: SMS, emails, website screenshots, transaction records"
+    ]
+  },
+  {
+    "id": "case3",
+    "title": "Ransomware Attack on Hospital - Bangalore 2023",
+    "summary": "A major private hospital's entire digital infrastructure was encrypted by ransomware, disrupting patient care and demanding $100,000 for decryption.",
+    "details": "In August 2023, a 500-bed private hospital in Bangalore suffered a devastating ransomware attack that encrypted patient records, imaging systems, laboratory databases, and administrative networks. The attack occurred through a phishing email sent to an administrative employee who downloaded what appeared to be a patient referral document.\n\nOnce inside the network, the ransomware spread rapidly through networked systems, encrypting:\n- Electronic Health Records (EHR) for 50,000+ patients\n- X-ray, MRI, and CT scan images\n- Laboratory test results and reports\n- Billing and insurance systems\n- Pharmacy inventory and prescription records\n- Appointment scheduling systems\n\nWithin hours, the hospital could not access patient histories, view diagnostic images, or process new admissions. Emergency services were diverted to other hospitals. Surgical procedures were postponed. Doctors reverted to paper records and manual processes.\n\nThe ransomware displayed a message demanding $100,000 in Bitcoin within 72 hours, threatening to publish sensitive patient data on the dark web if unpaid. The hospital had outdated backups that were also partially encrypted.\n\nAfter involving cybersecurity experts and law enforcement, the hospital chose not to pay. Recovery took three weeks, cost over ₹2 crore, and required rebuilding systems from scratch. Some patient data was permanently lost. No arrests were made as attackers operated from overseas.",
+    "impact": "Three weeks of operational disruption. ₹2+ crore recovery costs. Permanent loss of some patient records. Reputation damage and patient trust erosion. Potential regulatory penalties for data breach. Several patients had treatment delays with health consequences.",
+    "laws": "Information Technology Act Section 66 (computer-related offenses), Section 43 (damage to computer systems). Indian Penal Code Section 384 (extortion), Section 506 (criminal intimidation). Patient data breach falls under IT Act data protection provisions and upcoming Digital Personal Data Protection Act. International cooperation required for overseas attackers.",
+    "reporting_links": ["https://cybercrime.gov.in", "https://www.cert-in.org.in", "https://www.mohfw.gov.in"],
+    "prevention": [
+      "Implement comprehensive backup strategy with offsite/offline copies",
+      "Regular security awareness training for all staff",
+      "Network segmentation to isolate critical systems",
+      "Email filtering with attachment scanning",
+      "Regular security audits and penetration testing",
+      "Maintain updated antivirus and endpoint protection",
+      "Disable macros in email attachments by default",
+      "Implement strict access controls and least privilege principle",
+      "Have incident response plan with regular drills",
+      "Keep all systems patched and updated",
+      "Consider cyber insurance for healthcare facilities"
+    ],
+    "immediate_actions": [
+      "Immediately disconnect infected systems from network",
+      "Do not shut down infected computers (may lose decryption possibility)",
+      "Isolate backup systems to prevent encryption",
+      "Activate incident response team and document everything",
+      "Report to CERT-In and cybercrime authorities immediately",
+      "Notify patients of potential data breach as required by law",
+      "Consult cybersecurity experts before making any decisions",
+      "Do not pay ransom (generally) - no guarantee of decryption, funds criminals",
+      "Preserve evidence for investigation",
+      "Activate business continuity plan and manual procedures",
+      "Communicate transparently with staff, patients, and media"
+    ]
+  },
+  {
+    "id": "case4",
+    "title": "ATM Skimming and Malware - Pan-India Network 2024",
+    "summary": "International criminal network installed skimmers and malware on ATMs across India, stealing card data and PINs from thousands of customers.",
+    "details": "Between January and June 2024, law enforcement uncovered a sophisticated ATM fraud operation spanning 12 Indian states. The operation combined physical skimming devices with malware installed on ATM systems.\n\nThe Attack Method:\n1. Physical access: Attackers posed as technicians to access ATM machines\n2. Skimmer installation: Devices placed over card readers captured magnetic stripe data\n3. Hidden cameras: Recorded PIN entries from various angles\n4. ATM malware: Jackpotting software installed on some machines to directly dispense cash\n5. Data harvesting: Stolen card data transmitted via cellular networks to overseas servers\n6. Card cloning: Information used to create duplicate cards\n7. Cash withdrawal: Mules simultaneously withdrew money from multiple ATMs across the country\n\nThe operation was highly organized with distinct roles:\n- Technical team installing devices\n- Data processors creating cloned cards\n- Money mules making withdrawals\n- International coordinators managing operations\n\nThe fraud was detected when multiple banks noticed unusual patterns: hundreds of cards used at ATMs far from their usual locations within minutes of each other. Forensic analysis revealed skimmers on 200+ ATMs across India.\n\nTotal estimated losses exceeded ₹50 crore affecting over 10,000 customers. International cooperation led to arrests in Romania, Bulgaria, and India, though the primary organizers remained at large.",
+    "impact": "₹50+ crore in losses across multiple banks. 10,000+ customers affected. Banks incurred costs for ATM security upgrades, card replacements, and fraud investigations. Customer trust in ATM safety declined. Increased insurance premiums for banks.",
+    "laws": "Information Technology Act Section 66C (identity theft), Section 43 (unauthorized access to computer resources). Indian Penal Code Section 420 (cheating), Section 120B (criminal conspiracy), Section 379 (theft). Payment and Settlement Systems Act violations. International crime requiring cooperation through Interpol and bilateral treaties.",
+    "reporting_links": ["https://cybercrime.gov.in", "https://www.rbi.org.in", "https://www.police.gov.in"],
+    "prevention": [
+      "Inspect ATMs for unusual devices before use (check card slot, keypad, and surrounding areas)",
+      "Cover PIN entry with your hand or body",
+      "Use ATMs inside bank branches rather than standalone machines when possible",
+      "Enable transaction alerts for real-time monitoring",
+      "Set daily withdrawal and transaction limits",
+      "Check for loose, misaligned, or oddly colored card readers",
+      "Be suspicious if card is difficult to insert or gets stuck",
+      "Use chip-and-PIN rather than magnetic stripe when possible",
+      "Regularly review bank statements for unauthorized transactions",
+      "Avoid ATMs in isolated or poorly lit locations",
+      "Consider using contactless payments or mobile banking instead"
+    ],
+    "immediate_actions": [
+      "Report unauthorized transactions to bank within 3 days for zero liability",
+      "Request immediate card blocking and replacement",
+      "File complaint at cybercrime.gov.in with transaction details",
+      "Change ATM PIN immediately using secure methods",
+      "Review all accounts for suspicious activity",
+      "Request bank to investigate the specific ATM used",
+      "Keep detailed records: dates, times, ATM locations, amounts",
+      "Monitor account closely for next 90 days",
+      "Consider temporarily freezing card for online transactions",
+      "Report physical skimmers to bank and police if discovered",
+      "Request refund through bank's fraud protection policy"
+    ]
+  }
+]

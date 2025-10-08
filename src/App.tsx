@@ -9,6 +9,7 @@ import Vault from "./pages/Vault";
 import Knowledge from "./pages/Knowledge";
 import Awareness from "./pages/Awareness";
 import Crypto from "./pages/Crypto";
+import PasswordStrength from "./pages/PasswordStrength";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/knowledge" element={<Knowledge />} />
           <Route path="/awareness" element={<Awareness />} />
           <Route path="/crypto" element={<Crypto />} />
+          <Route path="/password-strength" element={<PasswordStrength />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

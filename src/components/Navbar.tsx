@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Shield } from "lucide-react";
+import logo from "@/assets/logo.svg";
 
 export const Navbar = () => {
   return (
@@ -8,7 +8,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
-            <Shield className="h-8 w-8 text-primary group-hover:text-accent transition-colors" />
+            <img src={logo} alt="CyberShield" className="h-10 w-10 group-hover:scale-110 transition-transform" />
             <span className="text-2xl font-bold text-glow">CyberShield</span>
           </Link>
 
@@ -36,6 +36,11 @@ export const Navbar = () => {
             <Link to="/crypto">
               <Button variant="ghost" className="hover:text-accent">
                 Crypto Lookup
+              </Button>
+            </Link>
+            <Link to="/password-strength">
+              <Button variant="ghost" className="hover:text-accent">
+                Password Strength
               </Button>
             </Link>
           </div>

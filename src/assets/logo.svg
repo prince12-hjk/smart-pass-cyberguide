@@ -1,0 +1,46 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield outline with glow effect -->
+  <path d="M64 16 L100 28 L100 60 C100 84 86 100 64 112 C42 100 28 84 28 60 L28 28 Z" 
+        stroke="url(#shieldGradient)" 
+        stroke-width="3" 
+        fill="none" 
+        filter="url(#glow)"/>
+  
+  <!-- Inner shield detail -->
+  <path d="M64 28 L88 36 L88 60 C88 78 78 90 64 98 C50 90 40 78 40 60 L40 36 Z" 
+        fill="url(#shieldGradient)" 
+        opacity="0.3"/>
+  
+  <!-- Lock symbol -->
+  <rect x="56" y="58" width="16" height="18" rx="2" 
+        fill="url(#shieldGradient)" 
+        filter="url(#glow)"/>
+  <path d="M58 58 L58 52 C58 48.7 60.7 46 64 46 C67.3 46 70 48.7 70 52 L70 58" 
+        stroke="url(#shieldGradient)" 
+        stroke-width="2.5" 
+        fill="none" 
+        filter="url(#glow)"/>
+  
+  <!-- Lock keyhole -->
+  <circle cx="64" cy="66" r="2" fill="#000" opacity="0.6"/>
+  <rect x="63" y="66" width="2" height="4" fill="#000" opacity="0.6"/>
+  
+  <!-- Corner accents -->
+  <circle cx="64" cy="20" r="3" fill="#10b981" filter="url(#glow)"/>
+  <circle cx="96" cy="32" r="2" fill="#10b981" filter="url(#glow)" opacity="0.8"/>
+  <circle cx="32" cy="32" r="2" fill="#10b981" filter="url(#glow)" opacity="0.8"/>
+</svg>
