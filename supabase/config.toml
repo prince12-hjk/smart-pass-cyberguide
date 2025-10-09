@@ -1,1 +1,13 @@
 project_id = "oihvofqfsrvkxgqtxjts"
+
+[functions.generate-cyber-tip]
+verify_jwt = false
+
+[functions.generate-knowledge-insight]
+verify_jwt = false
+
+[functions.generate-crime-insight]
+verify_jwt = false
+
+[functions.generate-password-advice]
+verify_jwt = false

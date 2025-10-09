@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Key, BookOpen, AlertTriangle, Coins, TrendingUp } from "lucide-react";
+import { Shield, Key, BookOpen, AlertTriangle, Coins, TrendingUp, Sparkles, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CyberTip {
   id: string;
@@ -14,13 +16,21 @@ interface CyberTip {
   severity: string;
 }
 
+interface AITip {
+  tip: string;
+  generated_by: string;
+}
+
 export default function Dashboard() {
   const [randomTip, setRandomTip] = useState<CyberTip | null>(null);
+  const [aiTip, setAiTip] = useState<AITip | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [passwordCount, setPasswordCount] = useState(0);
 
   useEffect(() => {
     fetchRandomTip();
     fetchPasswordCount();
+    fetchAITip();
   }, []);
 
   const fetchRandomTip = async () => {
@@ -47,6 +57,23 @@ export default function Dashboard() {
 
     if (!error && count !== null) {
       setPasswordCount(count);
+    }
+  };
+
+  const fetchAITip = async () => {
+    setIsLoadingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-cyber-tip');
+      
+      if (error) throw error;
+      
+      setAiTip(data);
+    } catch (error) {
+      console.error('Error fetching AI tip:', error);
+      // Fallback to local tips if AI fails
+      fetchRandomTip();
+    } finally {
+      setIsLoadingAI(false);
     }
   };
 
@@ -91,30 +118,58 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Your cyber protection command center</p>
         </div>
 
-        {randomTip && (
-          <Card className="mb-8 border-glow bg-gradient-to-r from-card to-muted/20">
-            <CardHeader>
+        <Card className="mb-8 border-glow bg-gradient-to-r from-card to-muted/20 animate-fade-in">
+          <CardHeader>
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">Security Tip of the Moment</CardTitle>
+                <Sparkles className="h-5 w-5 text-primary" />
+                <CardTitle className="text-lg">AI-Powered Security Tip</CardTitle>
               </div>
-            </CardHeader>
-            <CardContent>
-              <h3 className="font-semibold text-accent mb-2">{randomTip.title}</h3>
-              <p className="text-foreground">{randomTip.description}</p>
-              <div className="mt-3 flex gap-2">
-                <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary">
-                  {randomTip.category}
-                </span>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  randomTip.severity === 'high' ? 'bg-destructive/20 text-destructive' : 'bg-secondary/20 text-secondary'
-                }`}>
-                  {randomTip.severity} priority
-                </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={fetchAITip}
+                disabled={isLoadingAI}
+                className="hover-scale"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoadingAI ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {isLoadingAI ? (
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
               </div>
-            </CardContent>
-          </Card>
-        )}
+            ) : aiTip ? (
+              <>
+                <p className="text-foreground leading-relaxed">{aiTip.tip}</p>
+                <div className="mt-3 flex gap-2 items-center">
+                  <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary flex items-center gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    Powered by AI
+                  </span>
+                </div>
+              </>
+            ) : randomTip ? (
+              <>
+                <h3 className="font-semibold text-accent mb-2">{randomTip.title}</h3>
+                <p className="text-foreground">{randomTip.description}</p>
+                <div className="mt-3 flex gap-2">
+                  <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary">
+                    {randomTip.category}
+                  </span>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    randomTip.severity === 'high' ? 'bg-destructive/20 text-destructive' : 'bg-secondary/20 text-secondary'
+                  }`}>
+                    {randomTip.severity} priority
+                  </span>
+                </div>
+              </>
+            ) : null}
+          </CardContent>
+        </Card>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {dashboardCards.map((card) => (

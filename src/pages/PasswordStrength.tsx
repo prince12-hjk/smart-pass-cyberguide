@@ -4,7 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, AlertTriangle, Clock, Zap, Server, Globe } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Shield, AlertTriangle, Clock, Zap, Server, Globe, Sparkles, RefreshCw, Info } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 /**
  * Educational Password Strength Analyzer
@@ -46,9 +49,16 @@ interface PasswordAnalysis {
   suggestions: string[];
 }
 
+interface AIAdvice {
+  advice: string;
+  generated_by: string;
+}
+
 export default function PasswordStrength() {
   const [password, setPassword] = useState("");
   const [analysis, setAnalysis] = useState<PasswordAnalysis | null>(null);
+  const [aiAdvice, setAiAdvice] = useState<AIAdvice | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   /**
    * Calculate character set size based on password composition
@@ -204,6 +214,35 @@ export default function PasswordStrength() {
 
   const handleAnalyze = () => {
     analyzePassword(password);
+    setAiAdvice(null); // Reset AI advice when analyzing new password
+  };
+
+  const fetchAIAdvice = async () => {
+    if (!analysis) return;
+    
+    setIsLoadingAI(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-password-advice', {
+        body: {
+          entropy: analysis.entropy,
+          length: password.length,
+          hasUppercase: /[A-Z]/.test(password),
+          hasLowercase: /[a-z]/.test(password),
+          hasNumbers: /[0-9]/.test(password),
+          hasSymbols: /[^a-zA-Z0-9]/.test(password),
+          crackTime: analysis.crackTimes.cloudCluster
+        }
+      });
+      
+      if (error) throw error;
+      
+      setAiAdvice(data);
+    } catch (error) {
+      console.error('Error fetching AI advice:', error);
+      toast.error("Could not generate AI advice");
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const loadExample = (example: string) => {
@@ -355,7 +394,7 @@ export default function PasswordStrength() {
               </Card>
 
               {/* Suggestions */}
-              <Card className="border-glow">
+              <Card className="border-glow mb-6">
                 <CardHeader>
                   <CardTitle>Recommendations</CardTitle>
                   <CardDescription>
@@ -371,6 +410,66 @@ export default function PasswordStrength() {
                       </li>
                     ))}
                   </ul>
+                </CardContent>
+              </Card>
+
+              {/* AI-Powered Advice */}
+              <Card className="border-glow mb-6 bg-gradient-to-br from-card to-muted/20">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-accent" />
+                      <CardTitle>AI-Powered Security Advice</CardTitle>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={fetchAIAdvice}
+                      disabled={isLoadingAI}
+                      className="hover-scale"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isLoadingAI ? 'animate-spin' : ''}`} />
+                    </Button>
+                  </div>
+                  <CardDescription>
+                    Get personalized advice to strengthen this password
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {!aiAdvice && !isLoadingAI && (
+                    <Button
+                      onClick={fetchAIAdvice}
+                      className="w-full cyber-glow"
+                    >
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Generate AI Advice
+                    </Button>
+                  )}
+                  
+                  {isLoadingAI && (
+                    <div className="space-y-2">
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-5/6" />
+                      <Skeleton className="h-3 w-4/6" />
+                    </div>
+                  )}
+                  
+                  {aiAdvice && (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="bg-muted/50 p-4 rounded-lg border border-accent/20">
+                        <p className="text-sm text-foreground leading-relaxed">
+                          {aiAdvice.advice}
+                        </p>
+                      </div>
+                      <Alert className="border-primary/20">
+                        <Info className="h-4 w-4" />
+                        <AlertDescription className="text-xs">
+                          This is AI-generated advice for educational purposes. Always use unique passwords 
+                          and a password manager for real accounts.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </>
@@ -401,6 +500,10 @@ export default function PasswordStrength() {
               </p>
             </CardContent>
           </Card>
+
+          <footer className="mt-12 text-center text-sm text-muted-foreground py-6 border-t border-muted">
+            <p>CyberShield © 2025 | Educational use only | Not a substitute for professional security tools</p>
+          </footer>
         </div>
       </main>
     </div>
