@@ -20,7 +20,7 @@ This project can be edited directly using **Lovable.dev** or locally using your 
 ## 🌐 Live Project
 
 🔗 **Lovable Project URL**  
-https://lovable.dev/projects/75ee03cb-8116-4f38-85ea-f19efa7edfb4
+smart-pass-cyberguide.vercel.app
 
 ---
 
