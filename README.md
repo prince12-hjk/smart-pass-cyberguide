@@ -13,14 +13,14 @@ The project is developed using the latest frontend tooling and is designed for l
 - 🧩 Reusable components using **shadcn-ui**
 - ⚛️ Component-based architecture with **React**
 
-This project can be edited directly using **Lovable.dev** or locally using your own development environment.
+This project can be edited directly using  locally your own development environment.
 
 ---
 
 ## 🌐 Live Project
 
-🔗 **Lovable Project URL**  
-smart-pass-cyberguide.vercel.app
+🔗 **Project URL**  
+https://smart-pass-cyberguide.vercel.app
 
 ---
 
@@ -37,14 +37,9 @@ smart-pass-cyberguide.vercel.app
 
 ## ✏️ How to Edit the Project
 
-### Option 1: Edit Using Lovable (Recommended)
-1. Open the project on Lovable
-2. Use prompt-based editing
-3. Changes are auto-committed to the repository
-
 ---
 
-### Option 2: Edit Locally (IDE)
+### Option 1: Edit Locally (IDE)
 
 #### Prerequisites
 - Node.js (recommended via nvm)
